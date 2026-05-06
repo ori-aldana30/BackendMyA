@@ -23,51 +23,20 @@ namespace MyAMIS.Presentacion.Controllers
         [HttpGet("lista")]
         public async Task<IActionResult> Lista()
         {
-            var documentosBD = await (
-                from d in _context.DocumentoActivo
-                join a in _context.Activo on d.activoId equals a.idActivo
-                join t in _context.TipoDocumento on d.tipoDocumentoId equals t.idTipoDocumento
-                where d.estado == "Activo"
-                select new
-                {
-                    d.codigo,
-                    codigoActivo = a.codigo,
-                    tipoDocumento = t.nombre,
-                    d.referenciaDocumento,
-                    d.fechaRegistro
-                }
-            ).ToListAsync();
+            var query = await (from d in _context.DocumentoActivo
+                               join a in _context.Activo on d.activoId equals a.idActivo
+                               join t in _context.TipoDocumento on d.tipoDocumentoId equals t.idTipoDocumento
+                               where d.estado == "Activo"
+                               select new
+                               {
+                                   d.codigo,
+                                   codigoActivo = a.codigo,
+                                   tipoDocumento = t.nombre,
+                                   d.referenciaDocumento,
+                                   d.fechaRegistro
+                               }).ToListAsync();
 
-            var docsExternos = await _http.GetFromJsonAsync<List<DocumentoSolicitadoDTO>>(
-                $"{Constantes.URL_DOCUMENTACION}api/DocumentoSolicitadoes/ListarTodos"
-            );
-
-            if (docsExternos == null)
-                docsExternos = new List<DocumentoSolicitadoDTO>();
-
-            var resultado = (
-                from d in documentosBD
-                join ext in docsExternos
-                    on d.referenciaDocumento equals ext.CodigoDocSolicitado
-                    into joinExt
-                from ext in joinExt.DefaultIfEmpty()
-                select new DocumentoActivoReadDTO
-                {
-                    codigo = d.codigo,
-                    codigoActivo = d.codigoActivo,
-                    tipoDocumento = d.tipoDocumento,
-                    referenciaDocumento = d.referenciaDocumento,
-                    fechaRegistro = d.fechaRegistro,
-
-                    archivoUrl = ext != null ? ext.ArchivoUrl : null,
-                    nombreArchivo = ext != null ? ext.NombreArchivo : null,
-                    tipoArchivo = ext != null ? ext.TipoArchivo : null,
-                    tamañoArchivo = ext != null ? ext.TamañoArchivo : null,
-                    fechaEmision = ext != null ? ext.FechaEmision : null
-                }
-            ).ToList();
-
-            return Ok(resultado);
+            return Ok(query);
         }
 
         // GET: api/DocumentoActivos/porActivo/ACT-001
@@ -115,7 +84,7 @@ namespace MyAMIS.Presentacion.Controllers
                     archivoUrl = ext != null ? ext.ArchivoUrl : null,
                     nombreArchivo = ext != null ? ext.NombreArchivo : null,
                     tipoArchivo = ext != null ? ext.TipoArchivo : null,
-                    tamañoArchivo = ext != null ? ext.TamañoArchivo : null,
+                    tamañoArchivo = ext != null ? ext.TamanoArchivo : null,
                     fechaEmision = ext != null ? ext.FechaEmision : null
                 }
             ).ToList();

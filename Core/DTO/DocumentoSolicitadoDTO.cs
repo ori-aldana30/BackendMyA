@@ -11,7 +11,7 @@ namespace MyAMIS.Core.DTO
         public string CodigoDocSolicitado { get; set; }
 
         [JsonPropertyName("fechaEmision")]
-        public DateTime FechaEmision { get; set; }
+        public DateTime? FechaEmision { get; set; }
 
         [JsonPropertyName("estado")]
         public string Estado { get; set; }
@@ -32,9 +32,9 @@ namespace MyAMIS.Core.DTO
         public string TipoArchivo { get; set; }
 
         [JsonPropertyName("fechaCreacion")]
-        public DateTime FechaCreacion { get; set; }
+        public DateTime? FechaCreacion { get; set; }
 
         [JsonPropertyName("tamañoArchivo")]
-        public string TamañoArchivo { get; set; }
+        public string TamanoArchivo { get; set; }
     }
 }
