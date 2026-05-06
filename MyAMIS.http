@@ -1,0 +1,6 @@
+@MyAMIS_HostAddress = http://localhost:5268
+
+GET {{MyAMIS_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
