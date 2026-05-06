@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MyAMIS.Core.DTO;
+using System.Text.Json;
 
 namespace MyAMIS.Presentacion.Controllers
 {
@@ -19,12 +20,19 @@ namespace MyAMIS.Presentacion.Controllers
         {
             var url = "https://gestiondocumental-1.onrender.com/api/DocumentoSolicitadoes/ListarTodos";
 
-            var docs = await _http.GetFromJsonAsync<List<DocumentoSolicitadoDTO>>(url);
+            try
+            {
+                var result = await _http.GetFromJsonAsync<DocumentoSolicitadoResponseDTO>(url);
 
-            if (docs == null)
-                return BadRequest("No se pudo obtener documentos");
+                if (result == null || result.Data == null)
+                    return BadRequest("No se pudo obtener documentos");
 
-            return Ok(docs);
+                return Ok(result.Data);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Error: " + ex.Message);
+            }
         }
     }
 }
